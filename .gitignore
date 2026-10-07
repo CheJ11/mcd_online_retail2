@@ -1,0 +1,11 @@
+# Datos (se regeneran con los scripts)
+data/
+# Modelos entrenados
+models/*.joblib
+# Entorno y caché
+.venv/
+__pycache__/
+*.pyc
+.ipynb_checkpoints/
+.vscode/
+.DS_Store
