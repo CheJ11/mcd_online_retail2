@@ -1,0 +1,48 @@
+1. SERIE DIARIA
+Días con ventas: 603 | 2009-12-01 -> 2011-12-08 (se excluye 2011-12-09, día incompleto)
+count       603.00
+mean      31629.14
+std       16408.88
+min        3433.72
+25%       20891.86
+50%       27672.59
+75%       39178.67
+max      111053.68
+
+2. DIVISIÓN TEMPORAL
+Entrenamiento: 518 días | Prueba: 85 días (2011-09-01 -> 2011-12-08)
+Referencia: 0 días sin dato hace 52 semanas (se usa la media del entrenamiento)
+
+3. OPTIMIZACIÓN DEL BOSQUE ALEATORIO (MAE, validación cruzada temporal)
+ n_estimators max_depth  min_samples_leaf  MAE_cv  desv_cv
+          300         5                 5 8002.82  1280.29
+          300      None                 5 8034.37  1240.00
+          300        10                 5 8034.39  1236.28
+          100         5                 5 8036.42  1285.84
+          100      None                 5 8079.42  1243.29
+
+MAE_cv configuración por defecto: 8,346.44
+MAE_cv configuración optimizada: 8,002.82
+Mejores hiperparámetros: {'max_depth': 5, 'min_samples_leaf': 5, 'n_estimators': 300}
+
+4. RESULTADOS EN PRUEBA
+                                   MAE      RMSE    R2  error_total_%
+Referencia (hace 52 semanas)  13673.88  18504.51  0.05          -5.66
+Regresión lineal              11141.21  16111.48  0.28          -8.39
+Bosque aleatorio              10034.91  14419.06  0.42          -6.92
+
+Ingreso por mes, real y predicho (£):
+           ingreso  referencia     lineal     bosque
+fecha                                               
+2011-09  1017661.0    868214.0   852202.0   863337.0
+2011-10  1070299.0   1057138.0  1071858.0  1121967.0
+2011-11  1439257.0   1445499.0  1412293.0  1327709.0
+2011-12   415509.0    348738.0   275510.0   356688.0
+
+Importancia de variables (bosque aleatorio):
+semana_anio    0.563
+dia_semana     0.335
+dia_mes        0.083
+mes            0.019
+
+Guardado: figuras 10 y 11
