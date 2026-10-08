@@ -3,7 +3,8 @@ import matplotlib.pyplot as plt
 import pandas as pd
 from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import (ConfusionMatrixDisplay, accuracy_score, classification_report, f1_score, precision_score, recall_score)
-from sklearn.model_selection import train_test_split
+from sklearn.model_selection import GridSearchCV, cross_val_score, train_test_split
+from sklearn.pipeline import make_pipeline
 from sklearn.preprocessing import StandardScaler
 from sklearn.tree import DecisionTreeClassifier, export_text
 
@@ -22,6 +23,14 @@ log = []
 def registrar(msg=""):
     print(msg)
     log.append(str(msg))
+
+def mejores_combinaciones(busqueda, n=5):
+    """Las n combinaciones de hiperparámetros con mayor F1 en validación cruzada."""
+    tabla = pd.DataFrame(busqueda.cv_results_["params"]).fillna("None")  # class_weight=None
+    tabla.columns = [c.replace("logisticregression__", "") for c in tabla.columns]
+    tabla["f1_cv"] = busqueda.cv_results_["mean_test_score"]
+    tabla["desv_cv"] = busqueda.cv_results_["std_test_score"]
+    return tabla.sort_values("f1_cv", ascending=False).head(n).round(3)
 
 # 1. Tabla de clientes (solo líneas con CustomerID)
 df = pd.read_parquet(PROCESSED / "ventas_limpias.parquet").dropna(subset=["CustomerID"])
@@ -64,31 +73,64 @@ registrar(perfil.round(2).to_string())
 
 clientes.to_parquet(PROCESSED / "clientes.parquet")
 
-# 3. División entrenamiento / prueba (estratificada) y escalado
+# 3. División entrenamiento / prueba (estratificada)
 X = clientes[PREDICTORES]
 y = clientes["premium"]
 X_train, X_test, y_train, y_test = train_test_split(
     X, y, test_size=0.2, stratify=y, random_state=42)
-
-escalador = StandardScaler()
-X_train_esc = escalador.fit_transform(X_train)   # se ajusta solo con entrenamiento
-X_test_esc = escalador.transform(X_test)
 
 registrar("\n3. DIVISIÓN")
 registrar(f"Entrenamiento: {len(X_train):,} | Prueba: {len(X_test):,} | "
           f"Premium en prueba: {y_test.mean():.2%}")
 registrar(f"Exactitud de referencia (predecir siempre Normal): {1 - y_test.mean():.2%}")
 
-# 4. Entrenamiento y evaluación
-logistica = LogisticRegression(max_iter=1000)
-logistica.fit(X_train_esc, y_train)
-pred_log = logistica.predict(X_test_esc)
+# 4. Optimización de hiperparámetros: validación cruzada (5 particiones) solo en entrenamiento, la regresión va en un Pipeline para que el escalado se ajuste dentro de cada partición
+busqueda_log = GridSearchCV(
+    make_pipeline(StandardScaler(), LogisticRegression(max_iter=1000)),
+    param_grid={"logisticregression__C": [0.01, 0.1, 1, 10],
+                "logisticregression__class_weight": [None, "balanced"]},
+    cv=5, scoring="f1")
+busqueda_log.fit(X_train, y_train)
 
-arbol = DecisionTreeClassifier(max_depth=4, random_state=42)
-arbol.fit(X_train, y_train)    # el árbol no necesita escalado
-pred_arbol = arbol.predict(X_test)
+busqueda_arbol = GridSearchCV(
+    DecisionTreeClassifier(random_state=42),
+    param_grid={"max_depth": [2, 3, 4, 5, 6, 8],
+                "min_samples_leaf": [1, 10, 25, 50],
+                "class_weight": [None, "balanced"]},
+    cv=5, scoring="f1")
+busqueda_arbol.fit(X_train, y_train)
 
-registrar("\n4. RESULTADOS EN PRUEBA")
+# Configuración inicial (versión anterior), evaluada con las mismas particiones
+f1_inicial_log = cross_val_score(
+    make_pipeline(StandardScaler(), LogisticRegression(max_iter=1000)),
+    X_train, y_train, cv=5, scoring="f1").mean()
+f1_inicial_arbol = cross_val_score(
+    DecisionTreeClassifier(max_depth=4, random_state=42),
+    X_train, y_train, cv=5, scoring="f1").mean()
+
+registrar("\n4. OPTIMIZACIÓN DE HIPERPARÁMETROS (F1 Premium, validación cruzada)")
+registrar("Regresión logística, mejores combinaciones:")
+registrar(mejores_combinaciones(busqueda_log).to_string(index=False))
+registrar("\nÁrbol de decisión, mejores combinaciones:")
+registrar(mejores_combinaciones(busqueda_arbol).to_string(index=False))
+
+comparacion = pd.DataFrame({
+    "f1_cv_inicial": [f1_inicial_log, f1_inicial_arbol],
+    "f1_cv_optimizado": [busqueda_log.best_score_, busqueda_arbol.best_score_],
+}, index=["Regresión logística", "Árbol de decisión"])
+comparacion["mejora"] = comparacion["f1_cv_optimizado"] - comparacion["f1_cv_inicial"]
+registrar("\nConfiguración inicial (C=1; árbol max_depth=4) frente a la optimizada:")
+registrar(comparacion.round(3).to_string())
+registrar(f"Mejor regresión: {str(busqueda_log.best_params_).replace('logisticregression__', '')}")
+registrar(f"Mejor árbol: {busqueda_arbol.best_params_}")
+
+# Evaluación final: el conjunto de prueba se usa una sola vez
+mejor_log = busqueda_log.best_estimator_
+mejor_arbol = busqueda_arbol.best_estimator_
+pred_log = mejor_log.predict(X_test)
+pred_arbol = mejor_arbol.predict(X_test)
+
+registrar("\nRESULTADOS EN PRUEBA (modelos optimizados)")
 resumen = {}
 for nombre, pred in [("Regresión logística", pred_log), ("Árbol de decisión", pred_arbol)]:
     registrar(f"\n{nombre}")
@@ -102,15 +144,16 @@ registrar("Resumen:")
 registrar(tabla.round(3).to_string())
 
 # 5. Interpretación
+logistica = mejor_log.named_steps["logisticregression"]
 importancia = pd.DataFrame({
     "coef_logistica": logistica.coef_[0],
-    "importancia_arbol": arbol.feature_importances_,
+    "importancia_arbol": mejor_arbol.feature_importances_,
 }, index=PREDICTORES).sort_values("importancia_arbol", ascending=False)
-registrar("\n5. INTERPRETACIÓN")
+registrar("\n5. INTERPRETACIÓN (modelos optimizados)")
 registrar("Coeficientes de la regresión (variables estandarizadas) e importancia en el árbol:")
 registrar(importancia.round(3).to_string())
-registrar("\nReglas del árbol:")
-registrar(export_text(arbol, feature_names=PREDICTORES, class_names=CLASES))
+registrar("\nReglas del árbol (se muestran hasta 4 niveles):")
+registrar(export_text(mejor_arbol, feature_names=PREDICTORES, class_names=CLASES, max_depth=4))
 
 # Figura 06: matrices de confusión
 fig, axes = plt.subplots(1, 2, figsize=(11, 4.5))
@@ -121,7 +164,7 @@ for ax, nombre, pred in [(axes[0], "Regresión logística", pred_log),
     ax.set_title(f"{nombre}\nF1 Premium = {tabla.loc[nombre, 'f1_premium']:.3f}")
     ax.set_xlabel("Clase predicha")
     ax.set_ylabel("Clase real")
-fig.suptitle("Matrices de confusión (conjunto de prueba)")
+fig.suptitle("Matrices de confusión (conjunto de prueba, modelos optimizados)")
 fig.tight_layout()
 fig.savefig(FIGURES / "06_matrices_confusion.png", dpi=150)
 plt.close(fig)

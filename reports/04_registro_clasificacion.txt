@@ -25,51 +25,75 @@ Premium  5320.41        12.0      23.0       679.0                162.0         
 Entrenamiento: 4,671 | Prueba: 1,168 | Premium en prueba: 20.03%
 Exactitud de referencia (predecir siempre Normal): 79.97%
 
-4. RESULTADOS EN PRUEBA
+4. OPTIMIZACIÓN DE HIPERPARÁMETROS (F1 Premium, validación cruzada)
+Regresión logística, mejores combinaciones:
+   C class_weight  f1_cv  desv_cv
+ 1.0     balanced  0.775    0.022
+10.0     balanced  0.773    0.021
+10.0         None  0.773    0.009
+ 1.0         None  0.772    0.010
+ 0.1     balanced  0.770    0.017
+
+Árbol de decisión, mejores combinaciones:
+class_weight  max_depth  min_samples_leaf  f1_cv  desv_cv
+        None          4                25  0.779    0.014
+        None          4                10  0.778    0.012
+    balanced          3                 1  0.778    0.024
+    balanced          3                25  0.778    0.024
+    balanced          3                10  0.778    0.024
+
+Configuración inicial (C=1; árbol max_depth=4) frente a la optimizada:
+                     f1_cv_inicial  f1_cv_optimizado  mejora
+Regresión logística          0.772             0.775   0.002
+Árbol de decisión            0.777             0.779   0.002
+Mejor regresión: {'C': 1, 'class_weight': 'balanced'}
+Mejor árbol: {'class_weight': None, 'max_depth': 4, 'min_samples_leaf': 25}
+
+RESULTADOS EN PRUEBA (modelos optimizados)
 
 Regresión logística
               precision    recall  f1-score   support
 
-      Normal       0.93      0.96      0.95       934
-     Premium       0.84      0.73      0.78       234
+      Normal       0.97      0.90      0.93       934
+     Premium       0.68      0.88      0.76       234
 
-    accuracy                           0.92      1168
-   macro avg       0.89      0.85      0.87      1168
-weighted avg       0.92      0.92      0.92      1168
+    accuracy                           0.89      1168
+   macro avg       0.82      0.89      0.85      1168
+weighted avg       0.91      0.89      0.90      1168
 
 
 Árbol de decisión
               precision    recall  f1-score   support
 
-      Normal       0.95      0.95      0.95       934
-     Premium       0.79      0.80      0.79       234
+      Normal       0.95      0.94      0.95       934
+     Premium       0.78      0.81      0.79       234
 
     accuracy                           0.92      1168
-   macro avg       0.87      0.87      0.87      1168
+   macro avg       0.87      0.88      0.87      1168
 weighted avg       0.92      0.92      0.92      1168
 
 Resumen:
                      exactitud  precision_premium  recall_premium  f1_premium
-Regresión logística      0.918              0.838           0.731       0.781
-Árbol de decisión        0.917              0.789           0.799       0.794
+Regresión logística      0.892              0.679           0.876       0.765
+Árbol de decisión        0.916              0.781           0.808       0.794
 
-5. INTERPRETACIÓN
+5. INTERPRETACIÓN (modelos optimizados)
 Coeficientes de la regresión (variables estandarizadas) e importancia en el árbol:
                      coef_logistica  importancia_arbol
-frecuencia                    4.368              0.901
-productos_distintos           0.480              0.041
-lineas_por_factura            0.261              0.029
-es_uk                        -0.424              0.027
-antiguedad                    0.446              0.002
-recencia                     -0.356              0.000
+frecuencia                    5.027              0.906
+productos_distintos           0.538              0.038
+lineas_por_factura            0.252              0.029
+es_uk                        -0.405              0.028
+recencia                     -0.241              0.000
+antiguedad                    0.324              0.000
 
-Reglas del árbol:
+Reglas del árbol (se muestran hasta 4 niveles):
 |--- frecuencia <= 7.50
 |   |--- productos_distintos <= 104.50
 |   |   |--- frecuencia <= 5.50
-|   |   |   |--- antiguedad <= 2.50
+|   |   |   |--- frecuencia <= 2.50
 |   |   |   |   |--- class: Normal
-|   |   |   |--- antiguedad >  2.50
+|   |   |   |--- frecuencia >  2.50
 |   |   |   |   |--- class: Normal
 |   |   |--- frecuencia >  5.50
 |   |   |   |--- lineas_por_factura <= 19.01
@@ -78,10 +102,7 @@ Reglas del árbol:
 |   |   |   |   |--- class: Normal
 |   |--- productos_distintos >  104.50
 |   |   |--- es_uk <= 0.50
-|   |   |   |--- productos_distintos <= 125.50
-|   |   |   |   |--- class: Normal
-|   |   |   |--- productos_distintos >  125.50
-|   |   |   |   |--- class: Premium
+|   |   |   |--- class: Premium
 |   |   |--- es_uk >  0.50
 |   |   |   |--- frecuencia <= 4.50
 |   |   |   |   |--- class: Normal
