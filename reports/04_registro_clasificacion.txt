@@ -1,0 +1,115 @@
+1. TABLA DE CLIENTES
+Clientes: 5,839 | Fecha de referencia: 2011-12-10
+         ingreso   unidades  frecuencia  recencia  antiguedad  productos_distintos  lineas_por_factura    es_uk
+count    5839.00    5839.00     5839.00   5839.00     5839.00              5839.00              5839.0  5839.00
+mean     2830.40    1731.84        6.22    199.91      473.69                81.88               21.54     0.91
+std     13904.76    8595.72       12.64    208.61      223.11               116.08               18.78     0.28
+min         2.90       1.00        1.00      0.00        0.00                 1.00                 1.0     0.00
+25%       336.24     188.00        1.00     25.00      311.00                19.00                 9.8     1.00
+50%       851.01     480.00        3.00     95.00      529.00                45.00                17.0     1.00
+75%      2206.94    1344.00        7.00    379.00      666.00               103.00               27.25     1.00
+max    579128.64  365114.00      369.00    738.00      738.00              2507.00              299.71     1.00
+
+2. ETIQUETA
+Percentil 80 del ingreso: £2,864.06
+Clientes Premium: 1,168 (20.00%)
+Ingreso de los Premium: 76.73% del total
+Premium con una sola factura: 10
+
+Perfil por clase (mediana):
+         ingreso  frecuencia  recencia  antiguedad  productos_distintos  lineas_por_factura  es_uk
+Normal    596.09         2.0     169.0       456.0                 34.0                16.0    1.0
+Premium  5320.41        12.0      23.0       679.0                162.0               20.55    1.0
+
+3. DIVISIÓN
+Entrenamiento: 4,671 | Prueba: 1,168 | Premium en prueba: 20.03%
+Exactitud de referencia (predecir siempre Normal): 79.97%
+
+4. RESULTADOS EN PRUEBA
+
+Regresión logística
+              precision    recall  f1-score   support
+
+      Normal       0.93      0.96      0.95       934
+     Premium       0.84      0.73      0.78       234
+
+    accuracy                           0.92      1168
+   macro avg       0.89      0.85      0.87      1168
+weighted avg       0.92      0.92      0.92      1168
+
+
+Árbol de decisión
+              precision    recall  f1-score   support
+
+      Normal       0.95      0.95      0.95       934
+     Premium       0.79      0.80      0.79       234
+
+    accuracy                           0.92      1168
+   macro avg       0.87      0.87      0.87      1168
+weighted avg       0.92      0.92      0.92      1168
+
+Resumen:
+                     exactitud  precision_premium  recall_premium  f1_premium
+Regresión logística      0.918              0.838           0.731       0.781
+Árbol de decisión        0.917              0.789           0.799       0.794
+
+5. INTERPRETACIÓN
+Coeficientes de la regresión (variables estandarizadas) e importancia en el árbol:
+                     coef_logistica  importancia_arbol
+frecuencia                    4.368              0.901
+productos_distintos           0.480              0.041
+lineas_por_factura            0.261              0.029
+es_uk                        -0.424              0.027
+antiguedad                    0.446              0.002
+recencia                     -0.356              0.000
+
+Reglas del árbol:
+|--- frecuencia <= 7.50
+|   |--- productos_distintos <= 104.50
+|   |   |--- frecuencia <= 5.50
+|   |   |   |--- antiguedad <= 2.50
+|   |   |   |   |--- class: Normal
+|   |   |   |--- antiguedad >  2.50
+|   |   |   |   |--- class: Normal
+|   |   |--- frecuencia >  5.50
+|   |   |   |--- lineas_por_factura <= 19.01
+|   |   |   |   |--- class: Normal
+|   |   |   |--- lineas_por_factura >  19.01
+|   |   |   |   |--- class: Normal
+|   |--- productos_distintos >  104.50
+|   |   |--- es_uk <= 0.50
+|   |   |   |--- productos_distintos <= 125.50
+|   |   |   |   |--- class: Normal
+|   |   |   |--- productos_distintos >  125.50
+|   |   |   |   |--- class: Premium
+|   |   |--- es_uk >  0.50
+|   |   |   |--- frecuencia <= 4.50
+|   |   |   |   |--- class: Normal
+|   |   |   |--- frecuencia >  4.50
+|   |   |   |   |--- class: Normal
+|--- frecuencia >  7.50
+|   |--- frecuencia <= 10.50
+|   |   |--- lineas_por_factura <= 15.53
+|   |   |   |--- frecuencia <= 9.50
+|   |   |   |   |--- class: Normal
+|   |   |   |--- frecuencia >  9.50
+|   |   |   |   |--- class: Normal
+|   |   |--- lineas_por_factura >  15.53
+|   |   |   |--- es_uk <= 0.50
+|   |   |   |   |--- class: Premium
+|   |   |   |--- es_uk >  0.50
+|   |   |   |   |--- class: Premium
+|   |--- frecuencia >  10.50
+|   |   |--- frecuencia <= 13.50
+|   |   |   |--- lineas_por_factura <= 13.26
+|   |   |   |   |--- class: Premium
+|   |   |   |--- lineas_por_factura >  13.26
+|   |   |   |   |--- class: Premium
+|   |   |--- frecuencia >  13.50
+|   |   |   |--- frecuencia <= 16.50
+|   |   |   |   |--- class: Premium
+|   |   |   |--- frecuencia >  16.50
+|   |   |   |   |--- class: Premium
+
+
+Guardado: data/processed/clientes.parquet, figuras 06 y 07
