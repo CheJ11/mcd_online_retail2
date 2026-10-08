@@ -1,0 +1,40 @@
+              lineas                          descripcion  precio_mediano  decision
+StockCode                                                                          
+POST            1814                              POSTAGE          18.000   elimina
+DOT             1415                       DOTCOM POSTAGE         153.710   elimina
+M                786                               Manual           2.925   elimina
+C2               262                             CARRIAGE          50.000   elimina
+ADJUST            36  Adjustment by john on 26/01/2010 16          83.095   elimina
+BANK CHARGES      32                         Bank Charges          15.000   elimina
+DCGS0058          30                     MISO PRETTY  GUM           0.830  conserva
+GIFT_0001_20      26   Dotcomgiftshop Gift Voucher £20.00          17.020   elimina
+GIFT_0001_30      24   Dotcomgiftshop Gift Voucher £30.00          25.530   elimina
+DCGSSGIRL         23                      GIRLS PARTY BAG           3.290  conserva
+DCGSSBOY          21                       BOYS PARTY BAG           3.290  conserva
+PADS              17           PADS TO MATCH ALL CUSHIONS           0.001   elimina
+DCGS0076          14         SUNJAR LED NIGHT NIGHT LIGHT          16.130  conserva
+GIFT_0001_10      14   Dotcomgiftshop Gift Voucher £10.00           8.330   elimina
+DCGS0003          13                  BOXED GLASS ASHTRAY           2.510  conserva
+TEST001            9              This is a test product.           4.500   elimina
+GIFT_0001_50       6   Dotcomgiftshop Gift Voucher £50.00          42.110   elimina
+D                  5                             Discount          32.290   elimina
+GIFT_0001_40       5   Dotcomgiftshop Gift Voucher £40.00          33.330   elimina
+DCGS0069           5                OOH LA LA DOGS COLLAR          16.130  conserva
+DCGS0004           4           HAYNES CAMPER SHOULDER BAG          16.980  conserva
+ADJUST2            3  Adjustment by Peter on Jun 25 2010          300.130   elimina
+DCGS0072           3               CAT CAMOUFLAGUE COLLAR           5.170  conserva
+AMAZONFEE          3                           AMAZON FEE        6706.710   elimina
+S                  3                              SAMPLES          33.050   elimina
+SP1002             2               KID'S CHALKBOARD/EASEL           2.950  conserva
+DCGS0068           2                    DOGS NIGHT COLLAR           8.560  conserva
+DCGS0066N          2              NAVY CUDDLES DOG HOODIE           8.650  conserva
+DCGS0070           2                CAMOUFLAGE DOG COLLAR          12.720  conserva
+B                  1                      Adjust bad debt       11062.060   elimina
+DCGS0075           1                 CAMOUFLAGUE DOG LEAD          12.720  conserva
+DCGS0041           1     HAYNES MINI-COOPER PLAYING CARDS           5.060  conserva
+DCGS0044           1              HANDZ-OFF CAR FRESHENER           2.570  conserva
+DCGS0062           1              ROAD-RAGE CAR FRESHENER           2.510  conserva
+DCGS0037           1                   KEY-RING CORKSCREW          12.720  conserva
+GIFT_0001_70       1   Dotcomgiftshop Gift Voucher £70.00          59.570   elimina
+GIFT_0001_80       1   Dotcomgiftshop Gift Voucher £80.00          69.560   elimina
+TEST002            1              This is a test product.           1.000   elimina

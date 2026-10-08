@@ -1,0 +1,59 @@
+Filas iniciales: 1,044,848
+
+Prefijos de Invoice:
+(numérico)    1025677
+C               19165
+A                   6
+
+--- 0. Normalización de StockCode ---
+Líneas con espacios sobrantes : 1
+Códigos afectados (repr)      : ["'47503J '"]
+Grupos que difieren solo en mayúsculas: 173 (misma descripción: 163, distinta: 10)
+Líneas con código en minúscula: 3,345
+Códigos distintos: 5,304 -> 5,131
+
+Criterio                                      Eliminadas
+1. Duplicados exactos                            11,812
+2. Ventas anuladas por cancelación exacta         6,132
+3. Cancelaciones (prefijo C)                     19,104
+4. Cantidad o precio <= 0                         6,019
+5. Códigos que no son productos                   4,464
+
+Filas finales: 997,317  (4.55% eliminado)
+
+--- Detalle criterio 2 ---
+Pares venta-cancelación: 6,132
+Unidades anuladas      : 390,295
+Ingreso anulado (£)    : 618,046.15
+Mayores ventas anuladas:
+        Invoice StockCode                      Description  Quantity         InvoiceDate  CustomerID
+1043359  581483     23843      PAPER CRAFT , LITTLE BIRDIE     80995 2011-12-09 09:15:00       16446
+564557   541431     23166   MEDIUM CERAMIC TOP STORAGE JAR     74215 2011-01-18 10:01:00       12346
+298942   518505     21088     SET/6 FRUIT SALAD PAPER CUPS      7128 2010-08-09 13:10:00       14277
+298941   518505     21096  SET/6 FRUIT SALAD  PAPER PLATES      7008 2010-08-09 13:10:00       14277
+298953   518505     16047          POP ART PEN CASE & PENS      5184 2010-08-09 13:10:00       14277
+
+--- Códigos no estándar ---
+Códigos distintos: 38 | conservados: 17 | detalle en reports\01_codigos_no_estandar.txt
+
+--- Facturas con prefijo A ---
+        Invoice StockCode      Description  Quantity     Price  CustomerID
+179403  A506401         B  Adjust bad debt         1 -53594.36        <NA>
+276274  A516228         B  Adjust bad debt         1 -44031.79        <NA>
+403472  A528059         B  Adjust bad debt         1 -38925.87        <NA>
+802920  A563185         B  Adjust bad debt         1  11062.06        <NA>
+802921  A563186         B  Adjust bad debt         1 -11062.06        <NA>
+802922  A563187         B  Adjust bad debt         1 -11062.06        <NA>
+Quedan en la tabla limpia: 0
+
+--- Tabla limpia ---
+Facturas  : 39,259
+Productos : 4,716
+Clientes  : 5,839
+Países    : 43
+Líneas sin cliente: 22.74%
+Description nula  : 0
+Ingreso total (£) : 19,097,057.84
+Periodo   : 2009-12-01 07:45:00 -> 2011-12-09 12:50:00
+
+Guardado: data\processed\ventas_limpias.parquet
