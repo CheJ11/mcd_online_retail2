@@ -1,13 +1,3 @@
-"""
-00_descarga_datos.py
-Descarga Online Retail II (UCI, ID 502), verifica su integridad y estructura,
-y guarda una copia de trabajo en Parquet.
-
-Salidas:
-    data/raw/online_retail_II.xlsx      (original, solo lectura)
-    data/interim/online_retail_ii.parquet
-    reports/00_registro_descarga.txt
-"""
 import hashlib
 import os
 import stat
@@ -15,7 +5,7 @@ import urllib.request
 import zipfile
 from datetime import datetime
 from pathlib import Path
-
+import numpy as np
 import pandas as pd
 
 URL = "https://archive.ics.uci.edu/static/public/502/online+retail+ii.zip"
@@ -89,21 +79,24 @@ for nombre, df in hojas.items():
     if faltan or sobran:
         registrar(f"  ADVERTENCIA columnas. Faltan: {faltan} | Sobran: {sobran}")
 
-# 5. Solapamiento entre hojas (solo se mide; se resuelve en la limpieza)
-if len(hojas) == 2:
-    (n1, h1), (n2, h2) = hojas.items()
-    ini = max(h1["InvoiceDate"].min(), h2["InvoiceDate"].min())
-    fin = min(h1["InvoiceDate"].max(), h2["InvoiceDate"].max())
-    registrar("\n--- Solapamiento entre hojas ---")
-    if ini <= fin:
-        en_rango = lambda h: h[h["InvoiceDate"].between(ini, fin)]
-        a, b = en_rango(h1), en_rango(h2)
-        comunes = len(a.merge(b.drop_duplicates(), how="inner"))
-        registrar(f"Rango común        : {ini} -> {fin}")
-        registrar(f"Filas en rango     : {n1}={len(a):,} | {n2}={len(b):,}")
-        registrar(f"Filas idénticas en ambas hojas: {comunes:,}")
-    else:
-        registrar("Sin solapamiento de fechas.")
+# 5. Solapamiento entre hojas: se verifica fila a fila y se elimina de la primera
+(n1, h1), (n2, h2) = hojas.items()
+corte = h2["InvoiceDate"].min()
+s1 = h1[h1["InvoiceDate"] >= corte]
+s2 = h2[h2["InvoiceDate"] <= h1["InvoiceDate"].max()]
+
+huella = lambda d: np.sort(pd.util.hash_pandas_object(d, index=False).to_numpy())
+identicos = len(s1) == len(s2) and np.array_equal(huella(s1), huella(s2))
+
+registrar("\n--- Solapamiento entre hojas ---")
+registrar(f"Rango común        : {corte} -> {h1['InvoiceDate'].max()}")
+registrar(f"Filas en rango     : {n1}={len(s1):,} | {n2}={len(s2):,}")
+registrar(f"Bloques idénticos fila a fila: {identicos}")
+if not identicos:
+    raise ValueError("El solapamiento no es idéntico: revisar antes de eliminar.")
+
+hojas[n1] = h1[h1["InvoiceDate"] < corte]
+registrar(f"Filas eliminadas de {n1!r}: {len(s1):,}")
 
 # 6. Unión y tipos
 df = pd.concat(hojas.values(), ignore_index=True)

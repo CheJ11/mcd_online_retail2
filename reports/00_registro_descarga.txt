@@ -1,0 +1,33 @@
+Fecha de ejecución : 2026-10-07 19:08
+Fuente             : https://archive.ics.uci.edu/static/public/502/online+retail+ii.zip
+Tamaño zip         : 45.6 MB
+SHA-256 zip        : 572e36277c2390fbfde10664750731e0a86f55e33470d91919085f0408e67bfb
+Contenido del zip  : ['online_retail_II.xlsx']
+SHA-256 xlsx       : bcbe73b35f5b7babf197fb0cb983a11f5d9ff929078d4aa53d171b1f2df2e980
+
+--- Hojas ---
+'Year 2009-2010': 525,461 filas x 8 columnas | 2009-12-01 07:45:00 -> 2010-12-09 20:01:00
+'Year 2010-2011': 541,910 filas x 8 columnas | 2010-12-01 08:26:00 -> 2011-12-09 12:50:00
+
+--- Solapamiento entre hojas ---
+Rango común        : 2010-12-01 08:26:00 -> 2010-12-09 20:01:00
+Filas en rango     : Year 2009-2010=22,523 | Year 2010-2011=22,523
+Bloques idénticos fila a fila: True
+Filas eliminadas de 'Year 2009-2010': 22,523
+
+--- Dataset unido (sin limpiar) ---
+Filas x columnas   : 1,044,848 x 8
+Rango de fechas    : 2009-12-01 07:45:00 -> 2011-12-09 12:50:00
+
+Tipos y nulos:
+                       tipo   nulos  nulos_%
+Invoice              string       0     0.00
+StockCode            string       0     0.00
+Description          string    4275     0.41
+Quantity              int64       0     0.00
+InvoiceDate  datetime64[us]       0     0.00
+Price               float64       0     0.00
+Customer ID           Int64  235287    22.52
+Country              string       0     0.00
+
+Guardado: data\interim\online_retail_ii.parquet (7.1 MB)
