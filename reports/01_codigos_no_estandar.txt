@@ -2,7 +2,7 @@
 StockCode                                                                          
 POST            1814                              POSTAGE          18.000   elimina
 DOT             1415                       DOTCOM POSTAGE         153.710   elimina
-M                786                               Manual           2.925   elimina
+M                788                               Manual           2.950   elimina
 C2               262                             CARRIAGE          50.000   elimina
 ADJUST            36  Adjustment by john on 26/01/2010 16          83.095   elimina
 BANK CHARGES      32                         Bank Charges          15.000   elimina

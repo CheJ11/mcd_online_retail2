@@ -1,25 +1,23 @@
-Fecha de ejecución : 2026-10-07 19:08
-Fuente             : https://archive.ics.uci.edu/static/public/502/online+retail+ii.zip
-Tamaño zip         : 45.6 MB
-SHA-256 zip        : 572e36277c2390fbfde10664750731e0a86f55e33470d91919085f0408e67bfb
-Contenido del zip  : ['online_retail_II.xlsx']
-SHA-256 xlsx       : bcbe73b35f5b7babf197fb0cb983a11f5d9ff929078d4aa53d171b1f2df2e980
+1. DESCARGA
+Fecha de ejecución: 2026-10-07 20:05
+Fuente: https://archive.ics.uci.edu/static/public/502/online+retail+ii.zip
+Tamaño del zip: 45.6 MB
 
---- Hojas ---
-'Year 2009-2010': 525,461 filas x 8 columnas | 2009-12-01 07:45:00 -> 2010-12-09 20:01:00
-'Year 2010-2011': 541,910 filas x 8 columnas | 2010-12-01 08:26:00 -> 2011-12-09 12:50:00
+2. HOJAS
+Year 2009-2010: 525,461 filas | 2009-12-01 07:45:00 -> 2010-12-09 20:01:00
+  Columnas: ['Invoice', 'StockCode', 'Description', 'Quantity', 'InvoiceDate', 'Price', 'Customer ID', 'Country']
+Year 2010-2011: 541,910 filas | 2010-12-01 08:26:00 -> 2011-12-09 12:50:00
+  Columnas: ['Invoice', 'StockCode', 'Description', 'Quantity', 'InvoiceDate', 'Price', 'Customer ID', 'Country']
 
---- Solapamiento entre hojas ---
-Rango común        : 2010-12-01 08:26:00 -> 2010-12-09 20:01:00
-Filas en rango     : Year 2009-2010=22,523 | Year 2010-2011=22,523
-Bloques idénticos fila a fila: True
-Filas eliminadas de 'Year 2009-2010': 22,523
+3. SOLAPAMIENTO ENTRE HOJAS
+Rango común: 2010-12-01 08:26:00 -> 2010-12-09 20:01:00
+Filas en el rango: hoja 1 = 22,523 | hoja 2 = 22,523
+Filas de la hoja 1 con una fila idéntica en la hoja 2: 22,523
+Filas eliminadas de la hoja 1: 22,523
 
---- Dataset unido (sin limpiar) ---
-Filas x columnas   : 1,044,848 x 8
-Rango de fechas    : 2009-12-01 07:45:00 -> 2011-12-09 12:50:00
-
-Tipos y nulos:
+4. DATASET UNIDO (SIN LIMPIAR)
+Filas: 1,044,848 | Columnas: 8
+Periodo: 2009-12-01 07:45:00 -> 2011-12-09 12:50:00
                        tipo   nulos  nulos_%
 Invoice              string       0     0.00
 StockCode            string       0     0.00
